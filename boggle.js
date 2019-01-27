@@ -33,6 +33,7 @@ class Boggle {
 		this.$dice = jQuery( 'li' );
 		this.$word = jQuery( '.word' );
 		this.$submit = jQuery( '.submit' );
+		this.$shuffle = jQuery( '.shuffle' );
 		this.$previousWords = jQuery( '.previousWords' );
 		this._started = false;
 		this._currentWord = [];
@@ -43,6 +44,7 @@ class Boggle {
 
 		this.$dice.on( 'click', this.selectDie.bind( this ) );
 		this.$submit.on( 'click', this.submitWord.bind( this ) );
+		this.$shuffle.on( 'click', this.shuffle.bind( this ) );
 	}
 
 	get hasStarted(){
@@ -78,7 +80,7 @@ class Boggle {
 	}
 
 	// TODO: figure out if this is actually adjacent
-	get isValidAdjacent(){
+	isValidAdjacent( i ) {
 		return true;
 	}
 
@@ -186,6 +188,16 @@ class Boggle {
 		this.updateWord();
 	}
 
+	shuffle(){
+		this._currentWord = [];
+		this._lastLetterIndexes = [];
+		this.score = 0;
+		this.hasStarted = false;
+		this.$dice.removeClass( 'previous' ).removeClass( 'selected' );
+		this.generateDice();
+		this.updateWord();
+	}
+
 	selectDie( e ) {
 		let el = jQuery( e.currentTarget ),
 			i = el.data( 'index' ),
@@ -206,7 +218,7 @@ class Boggle {
 		else if ( this.hasStarted ) {
 
 			// If not adjacent, show a UI treatment that it's not valid
-			if ( ! this.isValidAdjacent ) {
+			if ( ! this.isValidAdjacent( i ) ) {
 				return this.error( el );
 			}
 
